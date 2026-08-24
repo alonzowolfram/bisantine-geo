@@ -389,7 +389,7 @@ if(analyte=="protein") {
   
   # Remove segments with <x% of genes detected,
   # but keep any segments given by the `segments_keep` configuration variable
-  if(sum(segments_keep %in% pData(data_object)[[phenodata_dcc_col_name]]) > 0) {
+  if(sum(segments_keep %in% pData(target_data_object)[[phenodata_dcc_col_name]]) > 0) {
     segments_keep_final <- (pData(target_data_object)$GeneDetectionRate >= (gene_detection_rate/100)) | (pData(target_data_object)[[phenodata_dcc_col_name]] %in% segments_keep) # We will later use this to subset the target data objects for the other modules
   } else {
     warning("None of the segments given in the `segments_keep` configuration variable were found in the data object. Please check for typos; segments will be filtered normally")
