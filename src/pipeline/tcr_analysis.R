@@ -40,7 +40,8 @@ calculate_shannon_diversity <- function(x) {
 }
 
 # Names of the metrics as stored in pData, for when we loop over them later
-metric_names <- c("Gini", "ShannonH", "Simpson", "InvSimpson")
+# 2026/08/24: Added new metric GammaDelta = score for abundance of gamma-delta T cells
+metric_names <- c("Gini", "ShannonH", "Simpson", "InvSimpson", "GammaDelta")
 
 ## @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 ##                                                                
@@ -84,6 +85,44 @@ if(!flagVariable(module_tcr) && module_tcr %in% names(target_data_object_list)) 
     pData(target_data_object)$ShannonH <- shannon_h
     pData(target_data_object)$Simpson <- simpson
     pData(target_data_object)$InvSimpson <- invsimpson
+    
+    ### ................................................
+    ###
+    ### Gamma-delta scores ----
+    ###
+    ### ................................................
+    
+    # Create a score for gamma-delta T cells
+    # Since a gamma-delta TCR is made of both a gamma and a delta chain,
+    # the score will need to reflect the abundance of both the gamma and the delta chain
+    # We will do this by having a gamma score and a delta score and then multiplying 
+    # the two together
+    
+    # Check for gamma/delta TCR probes
+    gd_tcr_probes <- base::grepl("TR[D/G][C/J/V]", tcr_probes)
+    if(length(gd_tcr_probes) < 1) { # No TCR probes
+      
+      gd_score <- rep(NA, nrow(pData(target_data_object)))
+      
+    } else {
+      # Extract the TCR probe expression matrix
+      exprs_tcr <- target_data_object@assayData$bg_sub_p90
+      
+      # Create the gamma score 
+      gamma_score <- exprs_tcr[base::grepl("TR[G][C/J/V]", rownames(exprs_tcr)),,drop=F] %>% colSums()
+      # Create the delta score
+      delta_score <- exprs_tcr[base::grepl("TR[D][C/J/V]", rownames(exprs_tcr)),,drop=F] %>% colSums()
+      
+      # Create the gamma-delta score
+      gd_score <- log2((gamma_score * delta_score) + 1)
+    }
+    # Add `gd_score` to pData
+    if(identical(paste0(pData(target_data_object)$Sample_ID, ".dcc"), names(gd_score))) {
+      pData(target_data_object)$GammaDelta <- gd_score 
+    } else {
+      pData(target_data_object)$GammaDelta <- rep(NA, nrow(pData(target_data_object)))
+      warning("Either there are no gamma/delta TCR probes in the QC-ed data set or the names of the gamma-delta scores do not match the metadata sample names. No analysis on gamma-delta T cells will be performed")
+    }
     
     ### ................................................
     ###
@@ -238,13 +277,20 @@ if(!flagVariable(module_tcr) && module_tcr %in% names(target_data_object_list)) 
             # Fit the user-defined linear mixed model
             # Loop over the different diversity/distribution metrics
             for(metric in metric_names) {
+              skip_to_next <- FALSE
+              if(!metric %in% names(df_final)) {
+                warning(glue::glue("Error in fitting linear mixed model for model {formula} - {subset_var} - {subset_var_level} for metric {metric}: {metric} not found in pData"))
+                skip_to_next <<- TRUE
+              }
+              if (skip_to_next) next
+              
               # Add the dependent variable
               formula_af <- paste(metric, formula) %>% as.formula
               
               model <- tryCatch(
                 expr = lmerTest::lmer(as.formula(formula_af), data = df_final),
                 error = function(e) {
-                  warning(glue::glue("Error in fitting linear mixed model for model {formula} - {subset_var} - {subset_var_level}: {e$message}"))
+                  warning(glue::glue("Error in fitting linear mixed model for model {formula} - {subset_var} - {subset_var_level} for metric {metric}: {e$message}"))
                   skip_to_next <<- TRUE
                 }
               )
@@ -484,11 +530,13 @@ if(!flagVariable(module_tcr) && module_tcr %in% names(target_data_object_list)) 
                   summarise(range = diff(range(value))) %>% 
                   as.data.frame
                 bracket_spacing <- 0.15 * ranges[,2]; names(bracket_spacing) <- ranges[,1]
-                highest_bracket <- bracket_spacing * ((pvals_df %>% nrow()) / 4 - 1)
+                highest_bracket <- bracket_spacing * ((pvals_df %>% nrow()) / 5 - 1) # Change 5 to the number of metrics
                 # Calculate the y-positions of the brackets
                 y.position <- c()
                 for(metric_name in metric_names) {
-                  y.position <- c(y.position, (tops %>% dplyr::filter(metric==metric_name) %>% .[1,2]) + seq(from = 0, to = highest_bracket %>% .[names(.)==metric_name], by = bracket_spacing %>% .[names(.)==metric_name]))
+                  y.position_metric_i <- (tops %>% dplyr::filter(metric==metric_name) %>% .[1,2]) + seq(from = 0, to = highest_bracket %>% .[names(.)==metric_name], by = bracket_spacing %>% .[names(.)==metric_name])
+                  print(glue::glue("{length(y.position_metric_i)}"))
+                  y.position <- c(y.position, y.position_metric_i)
                 }
                 pvals_df[["y.position"]] <- y.position
                 # Add `label` column 
