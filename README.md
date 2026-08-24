@@ -91,6 +91,16 @@ A tutorial with more details is forthcoming. Sometime. Maybe.
 After the pipeline is finished running, the folder containing the output files will be available in the `out` directory. See the `README.md` file in the `out` directory for an explanation of the outputs. 
 
 ## Changelog
+<b>2026/08/24</b> - v0.3.6-alpha:
+* Several bug fixes.
+* Modules now export R environment as Rdata file for manual analysis and ease of troubleshooting.
+* Added linear mixed models for differential expression/abundance analysis to 16S and TCR modules.
+* Added gamma-delta TCR scores to TCR analysis.
+* Added several new options, including the ability to keep specific segments even if they do not pass QC, and the ability to automatically remove NAs from downstream analysis for a given grouping variable. 
+* Added new methods for protein-based cell-type deconvolution.
+* Changes to plots, including added functionality to wrap long titles.
+* Added option to choose between score- or balance-based cutoffs for the number of pathways displayed in pathway analysis plots.
+
 <b>2025/11/21</b> - v0.3.5-alpha:
 * Pipeline now supports protein (NGS-based).
 * Restructured `src` folder.
