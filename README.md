@@ -167,7 +167,7 @@ After the pipeline is finished running, the folder containing the output files w
 
 ## Credits
 
-bisant-geo is developed and maintained by the Digital Spatial Profiling team of the PRIME-TR platform at the University of Texas MD Anderson Cancer Center. Some of the code is adapted from the GeomxTools Bioconductor package vignette, found [here](https://bioconductor.org/packages/devel/workflows/vignettes/GeoMxWorkflows/inst/doc/GeomxTools_RNA-NGS_Analysis.html).
+bisant-geo is developed and maintained by the spatial biology team of the PRIME-TR platform at the University of Texas MD Anderson Cancer Center. Some of the code is adapted from the GeomxTools Bioconductor package vignette, found [here](https://bioconductor.org/packages/devel/workflows/vignettes/GeoMxWorkflows/inst/doc/GeomxTools_RNA-NGS_Analysis.html).
 
 ## License
 
