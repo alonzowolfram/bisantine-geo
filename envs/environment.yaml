@@ -6,6 +6,7 @@ channels:
   - R
 dependencies: 
   - conda-forge::r-base
+  - conda-forge::radian
   - conda-forge::r-tidyverse
   - conda-forge::r-dplyr
   - bioconda::bioconductor-nanostringnctools
@@ -36,6 +37,7 @@ dependencies:
   - conda-forge::r-rtsne
   - conda-forge::r-scales
   - conda-forge::r-shiny
+  - conda-forge::r-survminer
   - conda-forge::r-umap
   - conda-forge::r-vegan
   - conda-forge::r-yaml
