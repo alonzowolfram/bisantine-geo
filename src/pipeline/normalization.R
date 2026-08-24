@@ -91,7 +91,7 @@ if(analyte=="protein") {
   names(colors) <- names(target_data_object@assayData)
   
   norm_methods_not_raw <- names(target_data_object@assayData) %>% .[. != "exprs"]
-  for(norm_method in c("exprs", norm_methods_not_raw)) { # Ensure raw goes first. 
+  for(norm_method in c("exprs", norm_methods_not_raw)) { # Ensure raw goes first
     plot_list_normalization[[module]][[norm_method]] <- assayDataElement(target_data_object[,1:10], elt = norm_method) %>% 
       melt %>% 
       dplyr::rename(Gene = 1, Segment = 2, Count = 3) %>%
@@ -207,7 +207,7 @@ if(analyte=="protein") {
     
     # Other normalization practices: https://bioconductor.org/packages/release/bioc/vignettes/GeoDiff/inst/doc/Workflow_WTA_kidney.html
     
-    # Normalize.
+    # Normalize
     # https://rdrr.io/github/Nanostring-Biostats/GeomxTools/man/normalize-NanoStringGeoMxSet-method.html
     # Q3 norm (75th percentile) for WTA/CTA with or without custom spike-ins
     target_data_object <- NanoStringNCTools::normalize(target_data_object ,
@@ -315,7 +315,7 @@ if(analyte=="protein") {
     
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     #
-    # Save back to list.
+    # Save back to list
     #
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     target_data_object_list[[module]] <- target_data_object
