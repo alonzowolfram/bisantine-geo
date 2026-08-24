@@ -91,6 +91,17 @@ A tutorial with more details is forthcoming. Sometime. Maybe.
 After the pipeline is finished running, the folder containing the output files will be available in the `out` directory. See the `README.md` file in the `out` directory for an explanation of the outputs. 
 
 ## Changelog
+<b>2025/11/21</b> - v0.3.5-alpha:
+* Pipeline now supports protein (NGS-based).
+* Restructured `src` folder.
+* Several bug fixes.
+* Several new options in configuration file.
+* New LMM method in differential immune-cell abundance that automatically calculates _p_-values.
+* Updated plots in output HTML report.
+* Added options for plot file type outputs.
+* Script files no longer considered input in Snakefile.
+* QC before differential expression to prevent linear algebra errors.
+
 <b>2024/11/20</b> - v0.3.4-alpha:
 * Added filter to differential expression analysis: mean value > 1. 
 * Split expression into BIS and WTA.
