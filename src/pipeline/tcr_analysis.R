@@ -99,7 +99,7 @@ if(!flagVariable(module_tcr) && module_tcr %in% names(target_data_object_list)) 
     # the two together
     
     # Check for gamma/delta TCR probes
-    gd_tcr_probes <- base::grepl("TR[D/G][C/J/V]", tcr_probes)
+    gd_tcr_probes <- base::grepl("TR[D/G][C]", tcr_probes)
     if(length(gd_tcr_probes) < 1) { # No TCR probes
       
       gd_score <- rep(NA, nrow(pData(target_data_object)))
@@ -109,9 +109,9 @@ if(!flagVariable(module_tcr) && module_tcr %in% names(target_data_object_list)) 
       exprs_tcr <- target_data_object@assayData$bg_sub_p90
       
       # Create the gamma score 
-      gamma_score <- exprs_tcr[base::grepl("TR[G][C/J/V]", rownames(exprs_tcr)),,drop=F] %>% colSums()
+      gamma_score <- exprs_tcr[base::grepl("TR[G][C]", rownames(exprs_tcr)),,drop=F] %>% colSums()
       # Create the delta score
-      delta_score <- exprs_tcr[base::grepl("TR[D][C/J/V]", rownames(exprs_tcr)),,drop=F] %>% colSums()
+      delta_score <- exprs_tcr[base::grepl("TR[D][C]", rownames(exprs_tcr)),,drop=F] %>% colSums()
       
       # Create the gamma-delta score
       gd_score <- log2((gamma_score * delta_score) + 1)
